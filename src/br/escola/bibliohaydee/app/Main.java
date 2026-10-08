@@ -19,19 +19,28 @@ public class Main {
         autor.setNacionalidade("Brasileiro");
         autor.setAnoNascimento(1839);
 
-        autores.add(autor);
+        if (autor.getNome() != null && !autor.getNome().trim().isEmpty()) {
+            autores.add(autor);
+        } else {
+            System.out.println("Nome do autor inválido.");
+        }
 
-        Livro livro = new Livro(
-                "Dom Casmurro",
-                "978-85-01-00001-1",
-                autor,
-                1899,
-                "Romance"
-        );
+        if (autores.contains(autor)) {
 
-        livros.add(livro);
+            Livro livro = new Livro(
+                    "Dom Casmurro",
+                    "978-85-01-00001-1",
+                    autor,
+                    1899,
+                    "Romance"
+            );
 
-        // COLOQUE AQUI
+            livros.add(livro);
+
+        } else {
+            System.out.println("É necessário cadastrar um autor antes de criar o livro.");
+        }
+
         System.out.println("\n===== ACERVO =====");
 
         if (livros.isEmpty()) {
