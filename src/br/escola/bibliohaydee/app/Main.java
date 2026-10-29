@@ -2,7 +2,7 @@ package br.escola.bibliohaydee.app;
 
 import br.escola.bibliohaydee.model.Autor;
 import br.escola.bibliohaydee.model.Livro;
-
+import br.escola.bibliohaydee.model.Usuario;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,9 +12,22 @@ public class Main {
 
         List<Autor> autores = new ArrayList<>();
         List<Livro> livros = new ArrayList<>();
+        List<Usuario> usuarios = new ArrayList<>();
+        Usuario usuario = new Usuario(
+                "Carlos",
+                "001",
+                "ALUNO",
+                3
+        );
 
+        usuarios.add(usuario);
         Autor autor = new Autor();
 
+        System.out.println("Usuário cadastrado: " + usuario.getNome());
+        System.out.println("Matrícula: " + usuario.getMatricula());
+        System.out.println("Tipo: " + usuario.getTipo());
+        System.out.println("Limite: " + usuario.getLimiteEmprestimos());
+        System.out.println("Empréstimos ativos: " + usuario.getEmprestimosAtivos());
         autor.setNome("Machado de Assis");
         autor.setNacionalidade("Brasileiro");
         autor.setAnoNascimento(1839);
