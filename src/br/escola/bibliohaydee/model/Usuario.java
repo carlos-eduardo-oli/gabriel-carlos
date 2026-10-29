@@ -1,4 +1,3 @@
-
 package br.escola.bibliohaydee.model;
 
 public class Usuario {
@@ -8,7 +7,11 @@ public class Usuario {
     private String tipo;
     private Integer limiteEmprestimos;
     private Integer emprestimosAtivos;
-    public Usuario(String nomeCadastro, String matriculaCadastro, String tipoCadastro, Integer limiteCadastro) {
+
+    public static final int LIMITE_PADRAO = 3;
+
+    public Usuario(String nomeCadastro, String matriculaCadastro,
+                   String tipoCadastro, Integer limiteCadastro) {
 
         if (nomeCadastro == null || nomeCadastro.trim().isEmpty()) {
             throw new IllegalArgumentException("Nome do usuário inválido.");
@@ -23,7 +26,13 @@ public class Usuario {
         tipo = tipoCadastro;
         limiteEmprestimos = limiteCadastro;
         emprestimosAtivos = 0;
-    }public String getNome() {
+    }
+
+    public Usuario(String nome, String matricula, String tipo) {
+        this(nome, matricula, tipo, LIMITE_PADRAO);
+    }
+
+    public String getNome() {
         return nome;
     }
 
@@ -41,5 +50,23 @@ public class Usuario {
 
     public Integer getEmprestimosAtivos() {
         return emprestimosAtivos;
+    }
+
+    public boolean setNome(String nome) {
+        if (nome == null || nome.trim().isEmpty()) {
+            return false;
+        }
+
+        this.nome = nome.trim();
+        return true;
+    }
+
+    public boolean setLimiteEmprestimos(int limiteEmprestimos) {
+        if (limiteEmprestimos < 1) {
+            return false;
+        }
+
+        this.limiteEmprestimos = limiteEmprestimos;
+        return true;
     }
 }
