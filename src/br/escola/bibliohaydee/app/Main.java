@@ -4,13 +4,16 @@ package br.escola.bibliohaydee.app;
 import br.escola.bibliohaydee.model.Autor;
 import br.escola.bibliohaydee.model.Livro;
 import br.escola.bibliohaydee.model.Usuario;
+import br.escola.bibliohaydee.model.Emprestimo;
 
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
 
-    private static Usuario buscarUsuario(ArrayList<Usuario> usuarios, String matricula) {
+    private static Usuario buscarUsuario(
+            ArrayList<Usuario> usuarios, String matricula) {
+
         for (Usuario usuario : usuarios) {
             if (usuario.getMatricula().equals(matricula)) {
                 return usuario;
@@ -19,7 +22,19 @@ public class Main {
         return null;
     }
 
-    private static void carregarAcervo(ArrayList<Autor> autores, ArrayList<Livro> livros) {
+    private static Livro buscarLivro(
+            ArrayList<Livro> livros, String isbn) {
+
+        for (Livro livro : livros) {
+            if (livro.getIsbn().equals(isbn)) {
+                return livro;
+            }
+        }
+        return null;
+    }
+
+    private static void carregarAcervo(
+            ArrayList<Autor> autores, ArrayList<Livro> livros) {
 
         Autor machado = new Autor();
         machado.setNome("Machado de Assis");
@@ -48,8 +63,9 @@ public class Main {
         livros.add(new Livro("Capitães da Areia", "006", jorge, 1937, "Romance"));
     }
 
-    // RF-006: pesquisa por parte do título.
-    private static void pesquisarPorTitulo(ArrayList<Livro> livros, Scanner scanner) {
+    // RF-006: pesquisa por título
+    private static void pesquisarPorTitulo(
+            ArrayList<Livro> livros, Scanner scanner) {
 
         System.out.print("Digite parte do título: ");
         String termo = scanner.nextLine();
@@ -79,7 +95,9 @@ public class Main {
         }
     }
 
-    private static void pesquisarPorAutor(ArrayList<Livro> livros, Scanner scanner) {
+    // RF-007: pesquisa por autor
+    private static void pesquisarPorAutor(
+            ArrayList<Livro> livros, Scanner scanner) {
 
         System.out.print("Digite o nome ou sobrenome do autor: ");
         String termo = scanner.nextLine();
@@ -119,6 +137,7 @@ public class Main {
         }
     }
 
+    // RF-008: relatório do acervo
     private static void gerarRelatorio(ArrayList<Livro> livros) {
 
         StringBuilder relatorio = new StringBuilder();
@@ -139,7 +158,7 @@ public class Main {
                 relatorio.append("Título: ").append(livro.getTitulo()).append("\n");
                 relatorio.append("Autor: ").append(livro.getAutor().getNome()).append("\n");
                 relatorio.append("Ano: ").append(livro.getAnoPublicacao()).append("\n");
-                relatorio.append("Disponível: ").append(livro.isDisponivel()).append("\n");
+                relatorio.append("Disponível: ").append(livro.estaDisponivel()).append("\n");
 
                 numero++;
             }
@@ -147,7 +166,81 @@ public class Main {
             relatorio.append("\nTotal de livros: ").append(livros.size()).append("\n");
         }
 
-        System.out.println(relatorio.toString());
+        System.out.println(relatorio);
+    }
+
+    // RF-009: registrar empréstimo
+    private static void registrarEmprestimo(
+            ArrayList<Livro> livros,
+            ArrayList<Usuario> usuarios,
+            ArrayList<Emprestimo> emprestimos,
+            Scanner scanner) {
+
+        System.out.print("Digite o ISBN do livro: ");
+        String isbn = scanner.nextLine();
+
+        Livro livro = buscarLivro(livros, isbn);
+
+        if (livro == null) {
+            System.out.println("Livro não encontrado.");
+            return;
+        }
+
+        System.out.print("Digite a matrícula do usuário: ");
+        String matricula = scanner.nextLine();
+
+        Usuario usuario = buscarUsuario(usuarios, matricula);
+
+        if (usuario == null) {
+            System.out.println("Usuário não encontrado.");
+            return;
+        }
+
+        if (!usuario.podeEmprestar()) {
+            System.out.println("Usuário atingiu o limite de empréstimos.");
+            System.out.println("Limite: " + usuario.getLimiteEmprestimos());
+            return;
+        }
+
+        if (!livro.estaDisponivel()) {
+            System.out.println("Livro indisponível para empréstimo.");
+            return;
+        }
+
+        if (!livro.emprestar()) {
+            System.out.println("Não foi possível emprestar o livro.");
+            return;
+        }
+
+        usuario.registrarEmprestimo();
+
+        Emprestimo emprestimo = new Emprestimo(livro, usuario);
+
+        emprestimos.add(emprestimo);
+
+        System.out.println("\nEmpréstimo registrado com sucesso!");
+        System.out.println(emprestimo);
+    }
+
+    // RF-010: consultar disponibilidade
+    private static void consultarDisponibilidade(
+            ArrayList<Livro> livros, Scanner scanner) {
+
+        System.out.print("Digite o ISBN do livro: ");
+        String isbn = scanner.nextLine();
+
+        Livro livro = buscarLivro(livros, isbn);
+
+        if (livro == null) {
+            System.out.println("Livro não encontrado.");
+            return;
+        }
+
+        if (livro.estaDisponivel()) {
+            System.out.println("O livro está disponível.");
+        } else {
+            System.out.println("O livro está emprestado.");
+        }
     }
 
     public static void main(String[] args) {
@@ -157,6 +250,7 @@ public class Main {
         ArrayList<Autor> autores = new ArrayList<>();
         ArrayList<Livro> livros = new ArrayList<>();
         ArrayList<Usuario> usuarios = new ArrayList<>();
+        ArrayList<Emprestimo> emprestimos = new ArrayList<>();
 
         System.out.print("Definir o limite? (S/N): ");
         String definirLimite = scanner.nextLine();
@@ -235,7 +329,10 @@ public class Main {
             System.out.println("1 - Pesquisar livro por título");
             System.out.println("2 - Pesquisar livro por autor");
             System.out.println("3 - Gerar relatório do acervo");
+            System.out.println("4 - Registrar empréstimo");
+            System.out.println("5 - Consultar disponibilidade");
             System.out.println("0 - Sair");
+
             System.out.print("Escolha uma opção: ");
 
             opcao = Integer.parseInt(scanner.nextLine());
@@ -252,6 +349,14 @@ public class Main {
 
                 case 3:
                     gerarRelatorio(livros);
+                    break;
+
+                case 4:
+                    registrarEmprestimo(livros, usuarios, emprestimos, scanner);
+                    break;
+
+                case 5:
+                    consultarDisponibilidade(livros, scanner);
                     break;
 
                 case 0:

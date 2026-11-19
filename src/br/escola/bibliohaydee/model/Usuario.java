@@ -17,13 +17,15 @@ public class Usuario {
             throw new IllegalArgumentException("Nome do usuário inválido.");
         }
 
-        if (!"ALUNO".equals(tipoCadastro) && !"PROFESSOR".equals(tipoCadastro)) {
+        if (tipoCadastro == null ||
+                (!"ALUNO".equalsIgnoreCase(tipoCadastro) &&
+                        !"PROFESSOR".equalsIgnoreCase(tipoCadastro))) {
             throw new IllegalArgumentException("Tipo de usuário inválido.");
         }
 
         nome = nomeCadastro;
         matricula = matriculaCadastro;
-        tipo = tipoCadastro;
+        tipo = tipoCadastro.toUpperCase();
         limiteEmprestimos = limiteCadastro;
         emprestimosAtivos = 0;
     }
@@ -68,5 +70,13 @@ public class Usuario {
 
         this.limiteEmprestimos = limiteEmprestimos;
         return true;
+    }
+
+    public boolean podeEmprestar() {
+        return emprestimosAtivos < limiteEmprestimos;
+    }
+
+    public void registrarEmprestimo() {
+        emprestimosAtivos++;
     }
 }

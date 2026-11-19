@@ -1,3 +1,4 @@
+
 package br.escola.bibliohaydee.model;
 
 public class Livro {
@@ -18,9 +19,13 @@ public class Livro {
         this.anoPublicacao = anoPublicacao;
         this.genero = genero;
         this.disponivel = true;
-    }public Livro(String titulo, String isbn, Autor autor, int anoDePublicacao) {
+    }
+
+    public Livro(String titulo, String isbn, Autor autor,
+                 int anoDePublicacao) {
         this(titulo, isbn, autor, anoDePublicacao, "Não informado");
     }
+
     public String getTitulo() {
         return titulo;
     }
@@ -41,7 +46,16 @@ public class Livro {
         return genero;
     }
 
-    public boolean isDisponivel() {
+    public boolean emprestar() {
+        if (!disponivel) {
+            return false;
+        }
+
+        disponivel = false;
+        return true;
+    }
+
+    public boolean estaDisponivel() {
         return disponivel;
     }
 }
